@@ -7,9 +7,8 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 
-const styles = (theme) => ({
+const styles = () => ({
   button: {
-    margin: theme.spacing.unit,
     display: 'block',
     flexWrap: 'wrap',
     width: '100%',
@@ -75,11 +74,11 @@ const SignUp = (props) => {
           }}
         >
           <Grid container alignItems="center" justify="center">
-            <Grid item xs={12} sm={6} style={{ 'text-align': 'center' }}>
+            <Grid item xs={12} sm={6} style={{ textAlign: 'center' }}>
               {' '}
               <img src="http://images.innoveduc.fr/react_odyssey_homer/wildhomer.png" />{' '}
             </Grid>
-            <Grid item xs={12} sm={6} alignContent="center">
+            <Grid item xs={12} sm={6}>
               {formisSubmit &&
                 (flash.success ? (
                   <SnackbarContent
@@ -102,9 +101,6 @@ const SignUp = (props) => {
                 style={{ marginTop: '16px' }}
               >
                 <TextField
-                  item
-                  xs={12}
-                  sm={6}
                   type="email"
                   name="email"
                   label="Email"
@@ -114,9 +110,6 @@ const SignUp = (props) => {
                   onChange={(e) => updateEmailField(e)}
                 />
                 <TextField
-                  item
-                  xs={12}
-                  sm={6}
                   type="password"
                   name="password"
                   label="Password"
