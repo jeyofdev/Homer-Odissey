@@ -2,7 +2,7 @@ const connection = require('../helpers/config');
 const express = require('express');
 const router = express.Router();
 
-router.post('/signup', (req, res, next) => {
+router.post('/signup', (req, res) => {
     const { email, password, name, lastname } = req.body;
 
     connection.query(
@@ -10,9 +10,9 @@ router.post('/signup', (req, res, next) => {
         [email, password, name, lastname],
         (err, results) => {
             if (err) {
-                res.sendStatus(500);
+                res.status(500).json({ flash:  "erreur de user" });
             } else {
-                res.send('I am in POST signup');
+                res.status(200).json({ flash:  "User has been signed up !" });
             }
         }
     );
