@@ -1,32 +1,52 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 
-class SignUp extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            email: 'test@test.com',
-        };
-        this.updateEmailField = this.updateEmailField.bind(this);
-    }
+const SignUp = () => {
+    const [user, setUser] = useState({
+        email: '',
+        password: '',
+        passwordVerif: '',
+        name: '',
+        lastname: '',
+    });
 
-    updateEmailField = (event) => {
-        this.setState({ ...this.state, email: event.target.value });
+    const updateEmailField = (e) => {
+        setUser({ ...user, [e.target.name]: e.target.value });
     };
 
-    render() {
-        const { email } = this.state;
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log(user);
+    };
 
-        return (
-            <div>
-                <h1>{email}</h1>
+    return (
+        <div>
+            <h1>{JSON.stringify(user, 1, 1)}</h1>
+            <form onSubmit={(e) => handleSubmit(e)}>
                 <input
                     type="email"
                     name="email"
-                    onChange={this.updateEmailField}
+                    onChange={(e) => updateEmailField(e)}
                 />
-            </div>
-        );
-    }
-}
+                <input
+                    type="password"
+                    name="password"
+                    onChange={(e) => updateEmailField(e)}
+                />
+                <input type="passwordVerif" name="passwordVerif" />
+                <input
+                    type="text"
+                    name="name"
+                    onChange={(e) => updateEmailField(e)}
+                />
+                <input
+                    type="text"
+                    name="lastname"
+                    onChange={(e) => updateEmailField(e)}
+                />
+                <input type="submit" value="Submit" />
+            </form>
+        </div>
+    );
+};
 
 export default SignUp;
