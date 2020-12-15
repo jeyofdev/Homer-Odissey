@@ -22,13 +22,10 @@ const styles = () => ({
   },
 });
 
-const SignUp = (props) => {
+const SignIn = (props) => {
   const [user, setUser] = useState({
     email: '',
     password: '',
-    passwordVerif: '',
-    name: '',
-    lastname: '',
   });
   const [flash, setFlash] = useState({
     success: '',
@@ -40,15 +37,17 @@ const SignUp = (props) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
+  console.log(flash);
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     axios
-      .post('/auth/signup', user)
+      .post('/auth/signin', user)
       .then((response) => response.data)
       .then(
-        (res) => setFlash({ ...flash, success: res.flash }),
-        (err) => setFlash({ ...flash, success: '', error: 'Ooops, problem' })
+        (res) => setFlash({ ...flash, success: res.flash, error: '' }),
+        (err) => console.log(err)
       );
 
     setFormIsSubmit(true);
@@ -84,7 +83,7 @@ const SignUp = (props) => {
               className="nav"
             >
               <Button variant="contained" style={{ margin: '0 8px' }}>
-                <Link to="/signin" className="navlink">
+                <Link to="/signup" className="navlink">
                   SignUp
                 </Link>
               </Button>
@@ -94,7 +93,12 @@ const SignUp = (props) => {
                 </Link>
               </Button>
             </Grid>
-            <Grid item xs={12} sm={6} style={{ textAlign: 'center' }}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              style={{ textAlign: 'center', position: 'relative' }}
+            >
               {' '}
               <img src="http://images.innoveduc.fr/react_odyssey_homer/wildhomer.png" />{' '}
             </Grid>
@@ -139,33 +143,6 @@ const SignUp = (props) => {
                   className={classes.textField}
                   onChange={(e) => updateEmailField(e)}
                 />
-                <TextField
-                  type="password"
-                  name="passwordVerif"
-                  label="Password confirmation"
-                  margin="normal"
-                  variant="outlined"
-                  className={classes.textField}
-                  onChange={(e) => updateEmailField(e)}
-                />
-                <TextField
-                  type="text"
-                  name="name"
-                  label="name"
-                  margin="normal"
-                  variant="outlined"
-                  className={classes.textField}
-                  onChange={(e) => updateEmailField(e)}
-                />
-                <TextField
-                  type="text"
-                  name="lastname"
-                  label="lastname"
-                  margin="normal"
-                  variant="outlined"
-                  className={classes.textField}
-                  onChange={(e) => updateEmailField(e)}
-                />
                 <Button
                   type="submit"
                   variant="contained"
@@ -188,4 +165,4 @@ const SignUp = (props) => {
   );
 };
 
-export default withStyles(styles)(SignUp);
+export default withStyles(styles)(SignIn);
