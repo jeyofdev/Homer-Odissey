@@ -8,12 +8,17 @@
   },
   "author": "wilder",
   "dependencies": {
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.18.2",
     "dotenv": "^8.2.0",
     "express": "^4.16.3",
     "express-router": "0.0.1",
+    "jsonwebtoken": "^8.5.1",
     "morgan": "^1.9.0",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"

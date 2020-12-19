@@ -19,12 +19,12 @@ app.get('/', (req, res) => {
     res.send('youhou');
 });
 
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
 
-app.listen(port, function () {
+app.listen(port, () => {
     console.log('Listening on port ' + port);
 });
