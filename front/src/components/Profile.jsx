@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import {
+  profileAction,
+  deleteSessionAction,
+} from '../redux/actions/authActions';
+
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import List from '@material-ui/core/List';
@@ -7,60 +14,73 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
 
-const Profile = () => {
-  const [profile, setProfile] = useState({
-    email: 'homer.simpson@wildcodeschool.fr',
-    name: 'Homer',
-    lastname: 'Simpson',
-  });
+const Profile = ({ token, profile, deleteSession, updateProfile }) => {
+  useEffect(() => {
+    axios({
+      method: 'get',
+      url: '/profile',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then((res) => updateProfile(res.data));
+  }, []);
+
+  const handleLogOut = () => {
+    deleteSession();
+    updateProfile({});
+  };
+
+  const { email, name, lastname } = profile;
 
   return (
-    <Grid
-      container
-      alignItems="center"
+    <Paper
+      elevation={4}
       style={{
-        height: '100%',
-        maxWidth: '1200px',
         margin: '0 auto',
+        padding: 32,
       }}
     >
-      <Grid
-        item
-        xs={12}
-        style={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}
-      >
-        <Paper
-          elevation={4}
+      <Grid container alignItems="center" justify="center">
+        <Grid
           style={{
-            margin: '0 auto',
-            padding: 32,
+            textAlign: 'left',
+            position: 'relative',
+            width: '100%',
           }}
+          className="nav"
         >
-          <Grid container alignItems="center" justify="center">
-            <Grid
-              style={{
-                textAlign: 'left',
-                position: 'relative',
-                width: '100%',
-              }}
-              className="nav"
-            >
-              <Button variant="contained" style={{ margin: '0 8px' }}>
-                <Link to="/signin" className="navlink">
-                  Log out
-                </Link>
-              </Button>
-            </Grid>
-            <List>
-              <ListItem>
-                <ListItemText primary="email" secondary="mon email" />
-              </ListItem>
-            </List>
-          </Grid>
-        </Paper>
+          <Button
+            onClick={handleLogOut}
+            variant="contained"
+            style={{ margin: '0 8px' }}
+          >
+            LOG OUT
+          </Button>
+        </Grid>
+        <List>
+          <ListItem>
+            <ListItemText primary="email" secondary={email} />
+          </ListItem>
+          <ListItem>
+            <ListItemText
+              primary="fullname"
+              secondary={`${name} ${lastname}`}
+            />
+          </ListItem>
+        </List>
       </Grid>
-    </Grid>
+    </Paper>
   );
 };
 
-export default Profile;
+const mapStateToProps = (state) => ({
+  token: state.auth.token,
+  profile: state.auth.profile,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  deleteSession: (token) => dispatch(deleteSessionAction()),
+  updateProfile: (profile) => dispatch(profileAction(profile)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);
