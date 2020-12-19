@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { useHistory, Link } from 'react-router-dom';
 import axios from 'axios';
+import PopUp from './PopUp';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
 import { createSessionAction } from '../redux/actions/authActions';
+import { updateMessageAction } from '../redux/actions/flashActions';
 
-const SignUp = ({ createSession }) => {
+const SignUp = ({ flash, updateFlashMessage }) => {
   const history = useHistory();
   const [user, setUser] = useState({
     email: '',
@@ -17,10 +18,6 @@ const SignUp = ({ createSession }) => {
     passwordVerif: '',
     name: '',
     lastname: '',
-  });
-  const [flash, setFlash] = useState({
-    success: '',
-    error: '',
   });
   const [formIsSubmit, setFormIsSubmit] = useState(false);
 
@@ -40,17 +37,13 @@ const SignUp = ({ createSession }) => {
         .then((response) => response.data)
         .then(
           (res) => {
-            setFlash({ ...flash, success: res.flash });
+            updateFlashMessage('success', res.flash);
             history.replace('/');
           },
-          (err) => setFlash({ ...flash, success: '', error: 'Ooops, problem' })
+          (err) => updateFlashMessage('error', 'Ooops, problem')
         );
     } else {
-      setFlash({
-        ...flash,
-        success: '',
-        error: 'Ooops, all fields must be completed ',
-      });
+      updateFlashMessage('error', 'Ooops, all fields must be completed ');
     }
   };
 
@@ -85,18 +78,7 @@ const SignUp = ({ createSession }) => {
           />{' '}
         </Grid>
         <Grid item xs={12} sm={6}>
-          {formIsSubmit &&
-            (flash.success ? (
-              <SnackbarContent
-                message={flash.success}
-                style={{ backgroundColor: '#43a047' }}
-              />
-            ) : (
-              <SnackbarContent
-                message={flash.error}
-                style={{ backgroundColor: '#d32f2f' }}
-              />
-            ))}
+          {formIsSubmit && <PopUp message={flash.message} />}
 
           <form
             noValidate
@@ -173,10 +155,13 @@ const SignUp = ({ createSession }) => {
 
 const mapStateToProps = (state) => ({
   token: state.auth.token,
+  flash: state.flash,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   createSession: (token) => dispatch(createSessionAction(token)),
+  updateFlashMessage: (typeMessage, message) =>
+    dispatch(updateMessageAction(typeMessage, message)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
