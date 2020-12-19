@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import axios from 'axios';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -23,6 +23,7 @@ const styles = () => ({
 });
 
 const SignUp = (props) => {
+  const history = useHistory();
   const [user, setUser] = useState({
     email: '',
     password: '',
@@ -34,24 +35,36 @@ const SignUp = (props) => {
     success: '',
     error: '',
   });
-  const [formisSubmit, setFormIsSubmit] = useState(false);
+  const [formIsSubmit, setFormIsSubmit] = useState(false);
 
-  const updateEmailField = (e) => {
+  const updateUser = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    axios
-      .post('/auth/signup', user)
-      .then((response) => response.data)
-      .then(
-        (res) => setFlash({ ...flash, success: res.flash }),
-        (err) => setFlash({ ...flash, success: '', error: 'Ooops, problem' })
-      );
-
     setFormIsSubmit(true);
+
+    const { email, password, passwordVerif, name, lastname } = user;
+
+    if (email && password && passwordVerif && name && lastname) {
+      axios
+        .post('/auth/signup', user)
+        .then((response) => response.data)
+        .then(
+          (res) => {
+            setFlash({ ...flash, success: res.flash });
+            history.push('/');
+          },
+          (err) => setFlash({ ...flash, success: '', error: 'Ooops, problem' })
+        );
+    } else {
+      setFlash({
+        ...flash,
+        success: '',
+        error: 'Ooops, all fields must be completed ',
+      });
+    }
   };
 
   const { classes } = props;
@@ -85,12 +98,7 @@ const SignUp = (props) => {
             >
               <Button variant="contained" style={{ margin: '0 8px' }}>
                 <Link to="/signin" className="navlink">
-                  SignUp
-                </Link>
-              </Button>
-              <Button variant="contained" style={{ margin: '0 8px' }}>
-                <Link to="/profile" className="navlink">
-                  Profile
+                  Sign in
                 </Link>
               </Button>
             </Grid>
@@ -99,7 +107,7 @@ const SignUp = (props) => {
               <img src="http://images.innoveduc.fr/react_odyssey_homer/wildhomer.png" />{' '}
             </Grid>
             <Grid item xs={12} sm={6}>
-              {formisSubmit &&
+              {formIsSubmit &&
                 (flash.success ? (
                   <SnackbarContent
                     className={classes.snackbar}
@@ -127,7 +135,7 @@ const SignUp = (props) => {
                   margin="normal"
                   variant="outlined"
                   className={classes.textField}
-                  onChange={(e) => updateEmailField(e)}
+                  onChange={(e) => updateUser(e)}
                 />
                 <TextField
                   type="password"
@@ -137,7 +145,7 @@ const SignUp = (props) => {
                   variant="outlined"
                   margin="normal"
                   className={classes.textField}
-                  onChange={(e) => updateEmailField(e)}
+                  onChange={(e) => updateUser(e)}
                 />
                 <TextField
                   type="password"
@@ -146,7 +154,7 @@ const SignUp = (props) => {
                   margin="normal"
                   variant="outlined"
                   className={classes.textField}
-                  onChange={(e) => updateEmailField(e)}
+                  onChange={(e) => updateUser(e)}
                 />
                 <TextField
                   type="text"
@@ -155,7 +163,7 @@ const SignUp = (props) => {
                   margin="normal"
                   variant="outlined"
                   className={classes.textField}
-                  onChange={(e) => updateEmailField(e)}
+                  onChange={(e) => updateUser(e)}
                 />
                 <TextField
                   type="text"
@@ -164,7 +172,7 @@ const SignUp = (props) => {
                   margin="normal"
                   variant="outlined"
                   className={classes.textField}
-                  onChange={(e) => updateEmailField(e)}
+                  onChange={(e) => updateUser(e)}
                 />
                 <Button
                   type="submit"

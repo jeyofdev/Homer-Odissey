@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import axios from 'axios';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -23,6 +23,7 @@ const styles = () => ({
 });
 
 const SignIn = (props) => {
+  const history = useHistory();
   const [user, setUser] = useState({
     email: '',
     password: '',
@@ -31,26 +32,41 @@ const SignIn = (props) => {
     success: '',
     error: '',
   });
-  const [formisSubmit, setFormIsSubmit] = useState(false);
+  const [formIsSubmit, setFormIsSubmit] = useState(false);
 
-  const updateEmailField = (e) => {
+  const updateUser = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  console.log(flash);
-
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    axios
-      .post('/auth/signin', user)
-      .then((response) => response.data)
-      .then(
-        (res) => setFlash({ ...flash, success: res.flash, error: '' }),
-        (err) => console.log(err)
-      );
-
     setFormIsSubmit(true);
+
+    const { email, password } = user;
+
+    if (email && password) {
+      axios
+        .get(`/auth/signin?email=${email}&password=${password}`)
+        .then((response) => response.data)
+        .then(
+          (res) => {
+            setFlash({ ...flash, success: res.flash });
+            history.push('/profile');
+          },
+          (err) =>
+            setFlash({
+              ...flash,
+              success: '',
+              error: 'Ooops, your login details are wrong',
+            })
+        );
+    } else {
+      setFlash({
+        ...flash,
+        success: '',
+        error: 'Ooops, all fields must be completed ',
+      });
+    }
   };
 
   const { classes } = props;
@@ -84,12 +100,7 @@ const SignIn = (props) => {
             >
               <Button variant="contained" style={{ margin: '0 8px' }}>
                 <Link to="/signup" className="navlink">
-                  SignUp
-                </Link>
-              </Button>
-              <Button variant="contained" style={{ margin: '0 8px' }}>
-                <Link to="/profile" className="navlink">
-                  Profile
+                  Sign Up
                 </Link>
               </Button>
             </Grid>
@@ -103,7 +114,7 @@ const SignIn = (props) => {
               <img src="http://images.innoveduc.fr/react_odyssey_homer/wildhomer.png" />{' '}
             </Grid>
             <Grid item xs={12} sm={6}>
-              {formisSubmit &&
+              {formIsSubmit &&
                 (flash.success ? (
                   <SnackbarContent
                     className={classes.snackbar}
@@ -131,7 +142,7 @@ const SignIn = (props) => {
                   margin="normal"
                   variant="outlined"
                   className={classes.textField}
-                  onChange={(e) => updateEmailField(e)}
+                  onChange={(e) => updateUser(e)}
                 />
                 <TextField
                   type="password"
@@ -141,7 +152,7 @@ const SignIn = (props) => {
                   variant="outlined"
                   margin="normal"
                   className={classes.textField}
-                  onChange={(e) => updateEmailField(e)}
+                  onChange={(e) => updateUser(e)}
                 />
                 <Button
                   type="submit"
